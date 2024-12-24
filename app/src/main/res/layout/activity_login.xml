@@ -7,6 +7,15 @@
     android:padding="16dp"
     android:gravity="center">
 
+
+    <LinearLayout
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:background="@color/black"
+        android:gravity="center"/>
+
     <!-- Gambar di bagian atas -->
     <ImageView
         android:id="@+id/imageView"
