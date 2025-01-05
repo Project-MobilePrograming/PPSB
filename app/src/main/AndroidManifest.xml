@@ -22,9 +22,6 @@
             android:name=".ui.StokBarangActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.EditBarangActivity"
-            android:exported="false" />
-        <activity
             android:name=".ui.MainActivity"
             android:exported="true">
             <intent-filter>

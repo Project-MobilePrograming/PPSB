@@ -11,6 +11,7 @@ import android.view.View;
 import com.dicoding.pp_stokbaju.R;
 
 public class MainActivity extends AppCompatActivity {
+    private Button btnTambahBaju, btnStokBaju, btnSearchBaju;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,11 +24,21 @@ public class MainActivity extends AppCompatActivity {
 //            return insets;
 //        });
         // Inisialisasi tombol
-        Button btnStokBarang = findViewById(R.id.btnStokBarang);
-        Button btnUpdateBarang = findViewById(R.id.btnUpdateBarang);
+        btnTambahBaju = findViewById(R.id.btnTambahBaju);
+        btnStokBaju = findViewById(R.id.btnStokBaju);
+        btnSearchBaju = findViewById(R.id.btnSearchBaju);
 
-        // Aksi tombol ke halaman Stok Barang
-        btnStokBarang.setOnClickListener(new View.OnClickListener() {
+        // Set OnClickListener untuk tombol Tambah Barang
+        btnTambahBaju.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, TambahBarangActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        // Set OnClickListener untuk tombol List Stok Baju
+        btnStokBaju.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, StokBarangActivity.class);
@@ -35,11 +46,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Aksi tombol ke halaman Update Barang
-        btnUpdateBarang.setOnClickListener(new View.OnClickListener() {
+        // Set OnClickListener untuk tombol Search Stok Baju
+        btnSearchBaju.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, UpdateBarangActivity.class);
+                Intent intent = new Intent(MainActivity.this, CariBarangActivity.class);
                 startActivity(intent);
             }
         });
