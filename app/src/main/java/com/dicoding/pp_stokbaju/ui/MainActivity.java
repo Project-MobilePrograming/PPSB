@@ -1,4 +1,4 @@
-package com.dicoding.pp_stokbaju;
+package com.dicoding.pp_stokbaju.ui;
 
 import android.os.Bundle;
 
@@ -7,9 +7,8 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import android.widget.Button;
 import android.view.View;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
+import com.dicoding.pp_stokbaju.R;
 
 public class MainActivity extends AppCompatActivity {
 

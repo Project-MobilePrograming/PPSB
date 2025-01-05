@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Judul -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CARI BARANG"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Input Pencarian -->
+    <EditText
+        android:id="@+id/etCariBarang"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Cari Barang"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Tombol Cari -->
+    <Button
+        android:id="@+id/btnCariBarang"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="CARI"
+        android:backgroundTint="@color/blue"
+        android:textColor="@color/white"
+        android:layout_marginBottom="16dp" />
+
+    <!-- RecyclerView untuk Menampilkan Hasil Pencarian -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewCariBarang"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="8dp" />
+
+
+</LinearLayout>
