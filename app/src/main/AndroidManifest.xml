@@ -13,10 +13,12 @@
         android:theme="@style/Theme.PPStokBaju"
         tools:targetApi="31">
         <activity
+            android:name=".ui.TambahBarangActivity" />
+        <activity
             android:name=".ui.CariBarangActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.UpdateBarangActivity"
+            android:name=".ui."
             android:exported="false" />
         <activity
             android:name=".ui.StokBarangActivity"
