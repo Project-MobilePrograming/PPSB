@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-import androidx.activity.EdgeToEdge;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.dicoding.pp_stokbaju.R;
+import com.dicoding.pp_stokbaju.adapter.BarangAdapter;
+import com.dicoding.pp_stokbaju.model.Barang;
 
 public class StokBarangActivity extends AppCompatActivity {
 

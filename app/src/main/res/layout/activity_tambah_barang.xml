@@ -10,10 +10,10 @@
         android:id="@+id/ivGambar"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_marginTop="16dp"
-        android:scaleType="centerCrop"
         android:layout_gravity="center"
-        android:background="@color/light_gray" />
+        android:layout_marginTop="50dp"
+        android:background="@color/light_gray"
+        android:scaleType="centerCrop" />
 
     <!-- Tombol Pilih Gambar -->
     <Button
@@ -42,33 +42,31 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ID Jenis Baju"
+        android:text="Jenis Baju"
         android:textSize="16sp"
         android:textStyle="bold"
         android:layout_marginTop="5dp" />
 
-    <EditText
-        android:id="@+id/etIdJenisBaju"
+    <Spinner
+        android:id="@+id/spinnerJenisBaju"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Masukkan ID Jenis Baju"
-        android:inputType="number" />
+        android:layout_marginBottom="16dp" />
 
     <!-- Input ID Ukuran Baju -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ID Ukuran Baju"
+        android:text="Ukuran Baju"
         android:textSize="16sp"
         android:textStyle="bold"
         android:layout_marginTop="5dp" />
 
-    <EditText
-        android:id="@+id/etIdUkuranBaju"
+    <Spinner
+        android:id="@+id/spinnerUkuranBaju"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Masukkan ID Ukuran Baju"
-        android:inputType="number" />
+        android:layout_marginBottom="16dp" />
 
     <!-- Input Harga -->
     <TextView

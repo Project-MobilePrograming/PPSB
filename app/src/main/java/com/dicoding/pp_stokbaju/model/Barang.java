@@ -1,4 +1,4 @@
-package com.dicoding.pp_stokbaju.ui;
+package com.dicoding.pp_stokbaju.model;
 
 public class Barang {
     private String namaBarang;

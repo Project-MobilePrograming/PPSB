@@ -9,19 +9,21 @@
         android:id="@+id/btnTambahBaju"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="250dp"
+        android:layout_marginTop="290dp"
         android:text="Tambah Barang"
         android:backgroundTint="@color/green"
         android:textColor="@color/white"
         android:layout_marginBottom="16dp"/>
+
     <Button
         android:id="@+id/btnStokBaju"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="List Stok Baju"
+        android:layout_marginBottom="16dp"
         android:backgroundTint="@color/blue"
-        android:textColor="@color/white"
-        android:layout_marginBottom="16dp"/>
+        android:text="List Stok Baju"
+        android:textColor="@color/white" />
+
     <Button
         android:id="@+id/btnSearchBaju"
         android:layout_width="match_parent"
@@ -30,6 +32,5 @@
         android:backgroundTint="@color/red"
         android:textColor="@color/white"
         android:layout_marginBottom="16dp"/>
-
 
 </LinearLayout>
