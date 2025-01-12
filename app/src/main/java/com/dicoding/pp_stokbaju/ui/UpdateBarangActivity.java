@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.dicoding.pp_stokbaju.R;
+import com.dicoding.pp_stokbaju.api.ApiResponse;
 import com.dicoding.pp_stokbaju.api.ApiService;
 import com.dicoding.pp_stokbaju.api.RetrofitClient;
 import com.dicoding.pp_stokbaju.model.Baju;
@@ -24,7 +25,6 @@ import com.dicoding.pp_stokbaju.model.JenisBaju;
 import com.dicoding.pp_stokbaju.model.UkuranBaju;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.List;
 
 import okhttp3.MediaType;
@@ -93,7 +93,9 @@ public class UpdateBarangActivity extends AppCompatActivity {
         btnUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateBaju(baju.getId()); // Panggil fungsi update dengan ID baju
+                if (validateInput()) {
+                    updateBaju(baju.getId()); // Panggil fungsi update dengan ID baju
+                }
             }
         });
 
@@ -105,14 +107,27 @@ public class UpdateBarangActivity extends AppCompatActivity {
             }
         });
     }
-
+    private boolean validateInput() {
+        if (etNamaBaju.getText().toString().isEmpty()) {
+            Toast.makeText(this, "Nama baju tidak boleh kosong", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (etHarga.getText().toString().isEmpty()) {
+            Toast.makeText(this, "Harga tidak boleh kosong", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (etStok.getText().toString().isEmpty()) {
+            Toast.makeText(this, "Stok tidak boleh kosong", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
     private void openImageChooser() {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -121,12 +136,16 @@ public class UpdateBarangActivity extends AppCompatActivity {
             ivGambar.setImageURI(imageUri);
 
             // Konversi Uri ke MultipartBody.Part
-            File file = new File(getRealPathFromURI(imageUri));
-            RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
-            imagePart = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
+            String realPath = getRealPathFromURI(imageUri);
+            if (realPath != null) {
+                File file = new File(realPath);
+                RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
+                imagePart = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
+            } else {
+                Toast.makeText(this, "Gagal memuat gambar", Toast.LENGTH_SHORT).show();
+            }
         }
     }
-
     private String getRealPathFromURI(Uri contentUri) {
         String[] proj = { MediaStore.Images.Media.DATA };
         Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
@@ -137,14 +156,13 @@ public class UpdateBarangActivity extends AppCompatActivity {
         cursor.close();
         return path;
     }
-
     private void fetchJenisBaju() {
-        Call<List<JenisBaju>> call = apiService.getAllJenisBaju();
-        call.enqueue(new Callback<List<JenisBaju>>() {
+        Call<ApiResponse<List<JenisBaju>>> call = apiService.getAllJenisBaju();
+        call.enqueue(new Callback<ApiResponse<List<JenisBaju>>>() {
             @Override
-            public void onResponse(Call<List<JenisBaju>> call, Response<List<JenisBaju>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<JenisBaju> jenisBajuList = response.body();
+            public void onResponse(Call<ApiResponse<List<JenisBaju>>> call, Response<ApiResponse<List<JenisBaju>>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    List<JenisBaju> jenisBajuList = response.body().getData();
                     ArrayAdapter<JenisBaju> adapter = new ArrayAdapter<>(
                             UpdateBarangActivity.this,
                             android.R.layout.simple_spinner_item,
@@ -168,19 +186,18 @@ public class UpdateBarangActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<List<JenisBaju>> call, Throwable t) {
+            public void onFailure(Call<ApiResponse<List<JenisBaju>>> call, Throwable t) {
                 Toast.makeText(UpdateBarangActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
-
     private void fetchUkuranBaju() {
-        Call<List<UkuranBaju>> call = apiService.getAllUkuranBaju();
-        call.enqueue(new Callback<List<UkuranBaju>>() {
+        Call<ApiResponse<List<UkuranBaju>>> call = apiService.getAllUkuranBaju();
+        call.enqueue(new Callback<ApiResponse<List<UkuranBaju>>>() {
             @Override
-            public void onResponse(Call<List<UkuranBaju>> call, Response<List<UkuranBaju>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<UkuranBaju> ukuranBajuList = response.body();
+            public void onResponse(Call<ApiResponse<List<UkuranBaju>>> call, Response<ApiResponse<List<UkuranBaju>>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    List<UkuranBaju> ukuranBajuList = response.body().getData();
                     ArrayAdapter<UkuranBaju> adapter = new ArrayAdapter<>(
                             UpdateBarangActivity.this,
                             android.R.layout.simple_spinner_item,
@@ -204,61 +221,56 @@ public class UpdateBarangActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<List<UkuranBaju>> call, Throwable t) {
+            public void onFailure(Call<ApiResponse<List<UkuranBaju>>> call, Throwable t) {
                 Toast.makeText(UpdateBarangActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
-
     private void updateBaju(int id) {
-        String namaBaju = etNamaBaju.getText().toString();
-        String jenisBaju = spinnerJenisBaju.getSelectedItem().toString();
-        String ukuranBaju = spinnerUkuranBaju.getSelectedItem().toString();
-        double harga = Double.parseDouble(etHarga.getText().toString());
-        int stok = Integer.parseInt(etStok.getText().toString());
+        try {
+            String namaBaju = etNamaBaju.getText().toString();
+            double harga = Double.parseDouble(etHarga.getText().toString());
+            int stok = Integer.parseInt(etStok.getText().toString());
 
-        // Buat RequestBody untuk setiap field
-        RequestBody namaBajuBody = RequestBody.create(MediaType.parse("text/plain"), namaBaju);
-        RequestBody jenisBajuBody = RequestBody.create(MediaType.parse("text/plain"), jenisBaju);
-        RequestBody ukuranBajuBody = RequestBody.create(MediaType.parse("text/plain"), ukuranBaju);
-        RequestBody hargaBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(harga));
-        RequestBody stokBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(stok));
+            // Buat RequestBody untuk setiap field
+            RequestBody namaBajuBody = RequestBody.create(MediaType.parse("text/plain"), namaBaju);
+            RequestBody hargaBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(harga));
+            RequestBody stokBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(stok));
 
-        // Panggil API untuk update baju
-        Call<Baju> call = apiService.updateBaju(
-                id,
-                namaBajuBody,
-                jenisBajuBody,
-                ukuranBajuBody,
-                hargaBody,
-                stokBody,
-                imagePart // Gunakan imagePart jika ada gambar baru
-        );
-        call.enqueue(new Callback<Baju>() {
-            @Override
-            public void onResponse(Call<Baju> call, Response<Baju> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(UpdateBarangActivity.this, "Baju berhasil diupdate", Toast.LENGTH_SHORT).show();
-                    finish(); // Tutup aktivitas setelah berhasil update
-                } else {
-                    Toast.makeText(UpdateBarangActivity.this, "Gagal mengupdate baju", Toast.LENGTH_SHORT).show();
+            // Panggil API untuk update baju
+            Call<ApiResponse<Baju>> call = apiService.updateBaju(
+                    id,
+                    namaBajuBody,
+                    hargaBody,
+                    stokBody,
+                    imagePart// Gunakan imagePart jika ada gambar baru
+            );
+            call.enqueue(new Callback<ApiResponse<Baju>>() {
+                @Override
+                public void onResponse(Call<ApiResponse<Baju>> call, Response<ApiResponse<Baju>> response) {
+                    if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                        Toast.makeText(UpdateBarangActivity.this, "Baju berhasil diupdate", Toast.LENGTH_SHORT).show();
+                        finish(); // Tutup aktivitas setelah berhasil update
+                    } else {
+                        Toast.makeText(UpdateBarangActivity.this, "Gagal mengupdate baju", Toast.LENGTH_SHORT).show();
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<Baju> call, Throwable t) {
-                Toast.makeText(UpdateBarangActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onFailure(Call<ApiResponse<Baju>> call, Throwable t) {
+                    Toast.makeText(UpdateBarangActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "Harga dan stok harus berupa angka", Toast.LENGTH_SHORT).show();
+        }
     }
-
     private void deleteBaju(int id) {
-        // Panggil API untuk hapus baju
-        Call<Void> call = apiService.deleteBaju(id);
-        call.enqueue(new Callback<Void>() {
+        Call<ApiResponse<Void>> call = apiService.deleteBaju(id);
+        call.enqueue(new Callback<ApiResponse<Void>>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
+            public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
                     Toast.makeText(UpdateBarangActivity.this, "Baju berhasil dihapus", Toast.LENGTH_SHORT).show();
                     finish(); // Tutup aktivitas setelah berhasil hapus
                 } else {
@@ -267,7 +279,7 @@ public class UpdateBarangActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
+            public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
                 Toast.makeText(UpdateBarangActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

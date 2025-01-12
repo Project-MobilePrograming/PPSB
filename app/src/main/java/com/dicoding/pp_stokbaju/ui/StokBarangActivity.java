@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.dicoding.pp_stokbaju.R;
 import com.dicoding.pp_stokbaju.adapter.BajuAdapter;
+import com.dicoding.pp_stokbaju.api.ApiResponse;
 import com.dicoding.pp_stokbaju.api.ApiService;
 import com.dicoding.pp_stokbaju.api.RetrofitClient;
 import com.dicoding.pp_stokbaju.model.Baju;
@@ -56,33 +57,40 @@ public class StokBarangActivity extends AppCompatActivity {
         // Ambil data baju dari API
         fetchDataBaju();
     }
-
     private void fetchDataBaju() {
-        Call<List<Baju>> call = apiService.getAllBaju();
-        call.enqueue(new Callback<List<Baju>>() {
+        Call<ApiResponse<List<Baju>>> call = apiService.getAllBaju();
+        call.enqueue(new Callback<ApiResponse<List<Baju>>>() {
             @Override
-            public void onResponse(Call<List<Baju>> call, Response<List<Baju>> response) {
+            public void onResponse(Call<ApiResponse<List<Baju>>> call, Response<ApiResponse<List<Baju>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    // Update data di adapter
-                    bajuList.clear();
-                    bajuList.addAll(response.body());
+                    ApiResponse<List<Baju>> apiResponse = response.body();
+                    if (apiResponse.isSuccess()) {
+                        List<Baju> bajuListResponse = apiResponse.getData();
+                        if (bajuListResponse != null) {
+                            bajuList.clear();
+                            bajuList.addAll(bajuListResponse);
 
-                    // Pastikan URL gambar lengkap
-                    for (Baju baju : bajuList) {
-                        if (baju.getGambar_url() != null && !baju.getGambar_url().startsWith("http")) {
-                            // Tambahkan base URL jika diperlukan
-                            baju.setGambar_url("http://example.com/" + baju.getGambar_url());
+                            // Ensure image URLs are complete
+                            for (Baju baju : bajuList) {
+                                if (baju.getGambar_url() != null && !baju.getGambar_url().startsWith("http")) {
+                                    baju.setGambar_url("http://example.com/" + baju.getGambar_url());
+                                }
+                            }
+
+                            bajuAdapter.notifyDataSetChanged();
+                        } else {
+                            Toast.makeText(StokBarangActivity.this, "Data baju kosong", Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        Toast.makeText(StokBarangActivity.this, "Gagal mengambil data baju: " + apiResponse.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-
-                    bajuAdapter.notifyDataSetChanged();
                 } else {
-                    Toast.makeText(StokBarangActivity.this, "Gagal mengambil data baju", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(StokBarangActivity.this, "Response tidak sukses", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Baju>> call, Throwable t) {
+            public void onFailure(Call<ApiResponse<List<Baju>>> call, Throwable t) {
                 Toast.makeText(StokBarangActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

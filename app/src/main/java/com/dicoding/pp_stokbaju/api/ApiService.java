@@ -16,11 +16,10 @@ import retrofit2.http.Part;
 import retrofit2.http.Path;
 
 public interface ApiService {
-    // ============================ BAJU ============================
-    // Endpoint untuk membuat data baju baru (menggunakan form-data)
+    // Baju endpoints
     @Multipart
     @POST("api/baju/create")
-    Call<Baju> createBaju(
+    Call<ApiResponse<Void>> createBaju(
             @Part("nama_baju") RequestBody namaBaju,
             @Part("id_jenis_baju") RequestBody idJenisBaju,
             @Part("id_ukuran_baju") RequestBody idUkuranBaju,
@@ -29,37 +28,32 @@ public interface ApiService {
             @Part MultipartBody.Part image
     );
 
-    // Endpoint untuk membaca semua data baju
     @GET("api/baju/read")
-    Call<List<Baju>> getAllBaju();
+    Call<ApiResponse<List<Baju>>> getAllBaju();
 
-    // Endpoint untuk membaca data baju berdasarkan ID
     @GET("api/baju/read/{id}")
-    Call<Baju> getBajuById(@Path("id") int id);
+    Call<ApiResponse<Baju>> getBajuById(@Path("id") int id);
 
-    // Endpoint untuk mengupdate data baju (menggunakan form-data)
     @Multipart
     @PUT("api/baju/update/{id}")
-    Call<Baju> updateBaju(
+    Call<ApiResponse<Baju>> updateBaju(
             @Path("id") int id,
             @Part("nama_baju") RequestBody namaBaju,
             @Part("id_jenis_baju") RequestBody idJenisBaju,
             @Part("id_ukuran_baju") RequestBody idUkuranBaju,
-            @Part("harga") RequestBody harga,
-            @Part("stok") RequestBody stok,
             @Part MultipartBody.Part image
     );
 
-    // Endpoint untuk menghapus data baju
     @DELETE("api/baju/delete/{id}")
-    Call<Void> deleteBaju(@Path("id") int id);
+    Call<ApiResponse<Void>> deleteBaju(@Path("id") int id);
 
-    // ============================ JENIS BAJU ============================
+    // Jenis Baju endpoints
     @GET("api/jenis_baju/read")
-    Call<List<JenisBaju>> getAllJenisBaju();
+    Call<ApiResponse<List<JenisBaju>>> getAllJenisBaju();
 
-    // ============================ UKURAN BAJU ============================
+    // Ukuran Baju endpoints
     @GET("api/ukuran_baju/read")
-    Call<List<UkuranBaju>> getAllUkuranBaju();
+    Call<ApiResponse<List<UkuranBaju>>> getAllUkuranBaju();
+}
 
 }

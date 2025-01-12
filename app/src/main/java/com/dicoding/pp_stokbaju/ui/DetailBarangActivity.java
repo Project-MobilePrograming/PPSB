@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.dicoding.pp_stokbaju.R;
+import com.dicoding.pp_stokbaju.api.ApiResponse;
 import com.dicoding.pp_stokbaju.api.ApiService;
 import com.dicoding.pp_stokbaju.api.RetrofitClient;
 import com.dicoding.pp_stokbaju.model.Baju;
@@ -90,21 +91,25 @@ public class DetailBarangActivity extends AppCompatActivity {
     }
 
     private void deleteBaju(int id) {
-        // Panggil API untuk hapus baju
-        Call<Void> call = apiService.deleteBaju(id);
-        call.enqueue(new Callback<Void>() {
+        Call<ApiResponse<Void>> call = apiService.deleteBaju(id);
+        call.enqueue(new Callback<ApiResponse<Void>>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    Toast.makeText(DetailBarangActivity.this, "Baju berhasil dihapus", Toast.LENGTH_SHORT).show();
-                    finish(); // Tutup aktivitas setelah menghapus
+            public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    ApiResponse<Void> apiResponse = response.body();
+                    if (apiResponse.isSuccess()) {
+                        Toast.makeText(DetailBarangActivity.this, "Baju berhasil dihapus", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(DetailBarangActivity.this, "Gagal menghapus baju: " + apiResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(DetailBarangActivity.this, "Gagal menghapus baju", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DetailBarangActivity.this, "Response tidak sukses", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
+            public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
                 Toast.makeText(DetailBarangActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
