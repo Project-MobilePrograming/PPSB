@@ -32,26 +32,26 @@ android {
 }
 
 dependencies {
+    // AndroidX
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     // Retrofit & Gson
-    implementation (libs.retrofit)
-    implementation (libs.converter.gson)
-    // Gson (untuk parsing JSON)
-    implementation (libs.gson)
-    // OkHttp (untuk logging dan interceptor)
-    implementation (libs.okhttp)
-    implementation (libs.logging.interceptor)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.gson)
+    // OkHttp
+    implementation ("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.11.0")
     // RecyclerView
-    implementation (libs.recyclerview)
-    // Glide (untuk menampilkan gambar dari URL)
-    implementation (libs.glide)
-    annotationProcessor (libs.compiler)
+    implementation(libs.recyclerview)
+    // Glide
+    implementation(libs.glide)
+    annotationProcessor(libs.compiler)
     androidTestImplementation (libs.junit.v115)
     androidTestImplementation (libs.espresso.core.v351)
-    testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    testImplementation(libs.junit)
 }

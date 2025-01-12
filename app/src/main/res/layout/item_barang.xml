@@ -34,7 +34,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Nama Baju"
-
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -52,9 +51,9 @@
                 android:id="@+id/tvUkuranBaju"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:text="Ukuran Baju"
-                android:textSize="16sp"
-                android:layout_marginTop="4dp" />
+                android:textSize="16sp" />
 
             <!-- Harga -->
             <TextView

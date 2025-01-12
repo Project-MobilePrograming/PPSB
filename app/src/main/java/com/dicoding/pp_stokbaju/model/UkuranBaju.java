@@ -1,37 +1,34 @@
 package com.dicoding.pp_stokbaju.model;
 
 public class UkuranBaju {
-    // ID ukuran baju (primary key di database)
     private int id;
-
-    // Nama ukuran baju (contoh: S, M, L, XL)
     private String ukuran_baju;
 
-    // Constructor untuk membuat objek UkuranBaju tanpa ID (digunakan saat create)
-    public UkuranBaju(String ukuran_baju) {
-        this.ukuran_baju = ukuran_baju;
-    }
-
-    // Constructor untuk membuat objek UkuranBaju dengan ID (digunakan saat update)
+    // Constructor
     public UkuranBaju(int id, String ukuran_baju) {
         this.id = id;
         this.ukuran_baju = ukuran_baju;
     }
 
-    // Getter dan Setter untuk semua field
+    // Getter dan Setter
     public int getId() {
-        return id;
+        return id; // Mengembalikan ID ukuran baju
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.id = id; // Mengatur ID ukuran baju
     }
 
     public String getUkuran_baju() {
-        return ukuran_baju;
+        return ukuran_baju; // Mengembalikan nama ukuran baju
     }
 
     public void setUkuran_baju(String ukuran_baju) {
-        this.ukuran_baju = ukuran_baju;
+        this.ukuran_baju = ukuran_baju; // Mengatur nama ukuran baju
+    }
+
+    @Override
+    public String toString() {
+        return ukuran_baju; // Agar ukuran baju ditampilkan di Spinner
     }
 }

@@ -7,7 +7,6 @@ import java.util.List;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
-import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
@@ -56,44 +55,11 @@ public interface ApiService {
     Call<Void> deleteBaju(@Path("id") int id);
 
     // ============================ JENIS BAJU ============================
-    // Endpoint untuk membuat jenis baju baru
-    @POST("api/jenis_baju/create")
-    Call<JenisBaju> createJenisBaju(@Body JenisBaju jenisBaju);
-
-    // Endpoint untuk membaca semua jenis baju
     @GET("api/jenis_baju/read")
     Call<List<JenisBaju>> getAllJenisBaju();
 
-    // Endpoint untuk membaca jenis baju berdasarkan ID
-    @GET("api/jenis_baju/read/{id}")
-    Call<JenisBaju> getJenisBajuById(@Path("id") int id);
-
-    // Endpoint untuk mengupdate jenis baju
-    @PUT("api/jenis_baju/update/{id}")
-    Call<JenisBaju> updateJenisBaju(@Path("id") int id, @Body JenisBaju jenisBaju);
-
-    // Endpoint untuk menghapus jenis baju
-    @DELETE("api/jenis_baju/delete/{id}")
-    Call<Void> deleteJenisBaju(@Path("id") int id);
-
     // ============================ UKURAN BAJU ============================
-    // Endpoint untuk membuat ukuran baju baru
-    @POST("api/ukuran_baju/create")
-    Call<UkuranBaju> createUkuranBaju(@Body UkuranBaju ukuranBaju);
-
-    // Endpoint untuk membaca semua ukuran baju
     @GET("api/ukuran_baju/read")
     Call<List<UkuranBaju>> getAllUkuranBaju();
 
-    // Endpoint untuk membaca ukuran baju berdasarkan ID
-    @GET("api/ukuran_baju/read/{id}")
-    Call<UkuranBaju> getUkuranBajuById(@Path("id") int id);
-
-    // Endpoint untuk mengupdate ukuran baju
-    @PUT("api/ukuran_baju/update/{id}")
-    Call<UkuranBaju> updateUkuranBaju(@Path("id") int id, @Body UkuranBaju ukuranBaju);
-
-    // Endpoint untuk menghapus ukuran baju
-    @DELETE("api/ukuran_baju/delete/{id}")
-    Call<Void> deleteUkuranBaju(@Path("id") int id);
 }

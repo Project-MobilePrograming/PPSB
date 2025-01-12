@@ -24,6 +24,7 @@ import com.dicoding.pp_stokbaju.model.JenisBaju;
 import com.dicoding.pp_stokbaju.model.UkuranBaju;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 import okhttp3.MediaType;
@@ -211,19 +212,26 @@ public class UpdateBarangActivity extends AppCompatActivity {
 
     private void updateBaju(int id) {
         String namaBaju = etNamaBaju.getText().toString();
-        int idJenisBaju = ((JenisBaju) spinnerJenisBaju.getSelectedItem()).getId();
-        int idUkuranBaju = ((UkuranBaju) spinnerUkuranBaju.getSelectedItem()).getId();
+        String jenisBaju = spinnerJenisBaju.getSelectedItem().toString();
+        String ukuranBaju = spinnerUkuranBaju.getSelectedItem().toString();
         double harga = Double.parseDouble(etHarga.getText().toString());
         int stok = Integer.parseInt(etStok.getText().toString());
+
+        // Buat RequestBody untuk setiap field
+        RequestBody namaBajuBody = RequestBody.create(MediaType.parse("text/plain"), namaBaju);
+        RequestBody jenisBajuBody = RequestBody.create(MediaType.parse("text/plain"), jenisBaju);
+        RequestBody ukuranBajuBody = RequestBody.create(MediaType.parse("text/plain"), ukuranBaju);
+        RequestBody hargaBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(harga));
+        RequestBody stokBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(stok));
 
         // Panggil API untuk update baju
         Call<Baju> call = apiService.updateBaju(
                 id,
-                RequestBody.create(MediaType.parse("text/plain"), namaBaju),
-                RequestBody.create(MediaType.parse("text/plain"), String.valueOf(idJenisBaju)),
-                RequestBody.create(MediaType.parse("text/plain"), String.valueOf(idUkuranBaju)),
-                RequestBody.create(MediaType.parse("text/plain"), String.valueOf(harga)),
-                RequestBody.create(MediaType.parse("text/plain"), String.valueOf(stok)),
+                namaBajuBody,
+                jenisBajuBody,
+                ukuranBajuBody,
+                hargaBody,
+                stokBody,
                 imagePart // Gunakan imagePart jika ada gambar baru
         );
         call.enqueue(new Callback<Baju>() {
