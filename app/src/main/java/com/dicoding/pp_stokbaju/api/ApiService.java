@@ -55,5 +55,3 @@ public interface ApiService {
     @GET("api/ukuran_baju/read")
     Call<ApiResponse<List<UkuranBaju>>> getAllUkuranBaju();
 }
-
-}

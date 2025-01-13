@@ -57,6 +57,7 @@ public class StokBarangActivity extends AppCompatActivity {
         // Ambil data baju dari API
         fetchDataBaju();
     }
+
     private void fetchDataBaju() {
         Call<ApiResponse<List<Baju>>> call = apiService.getAllBaju();
         call.enqueue(new Callback<ApiResponse<List<Baju>>>() {
@@ -69,14 +70,6 @@ public class StokBarangActivity extends AppCompatActivity {
                         if (bajuListResponse != null) {
                             bajuList.clear();
                             bajuList.addAll(bajuListResponse);
-
-                            // Ensure image URLs are complete
-                            for (Baju baju : bajuList) {
-                                if (baju.getGambar_url() != null && !baju.getGambar_url().startsWith("http")) {
-                                    baju.setGambar_url("http://example.com/" + baju.getGambar_url());
-                                }
-                            }
-
                             bajuAdapter.notifyDataSetChanged();
                         } else {
                             Toast.makeText(StokBarangActivity.this, "Data baju kosong", Toast.LENGTH_SHORT).show();
