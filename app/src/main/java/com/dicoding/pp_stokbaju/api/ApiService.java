@@ -1,54 +1,42 @@
 package com.dicoding.pp_stokbaju.api;
-import android.net.Uri;
-import java.io.File;
-import okhttp3.MediaType;
+
+import com.dicoding.pp_stokbaju.model.Barang;
+
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-public class ApiService {
-    public void uploadBaju(String namaBaju, String idJenisBaju, String idUkuranBaju,
-                           String harga, String stok, Uri imageUri) {
+import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.Multipart;
+import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Part;
 
-        ApiService apiService = RetrofitClient.getRetrofitInstance().create(ApiService.class);
+public interface ApiService {
 
-        // Buat RequestBody untuk data biasa
-        RequestBody namaBajuBody = RequestBody.create(MediaType.parse("text/plain"), namaBaju);
-        RequestBody idJenisBajuBody = RequestBody.create(MediaType.parse("text/plain"), idJenisBaju);
-        RequestBody idUkuranBajuBody = RequestBody.create(MediaType.parse("text/plain"), idUkuranBaju);
-        RequestBody hargaBody = RequestBody.create(MediaType.parse("text/plain"), harga);
-        RequestBody stokBody = RequestBody.create(MediaType.parse("text/plain"), stok);
+    // Endpoint untuk menambahkan barang
+    @FormUrlEncoded
+    @POST("add_barang.php")
+    Call<ResponseBody> addBarang(
+            @Field("nama_barang") String namaBarang,
+            @Field("stok") int stok,
+            @Field("gambar") String gambar // Gambar bisa berupa URL atau base64
+    );
 
-        // Buat MultipartBody.Part untuk gambar
-        File file = new File(imageUri.getPath());
-        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
-        MultipartBody.Part imagePart = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
+    // Endpoint untuk memperbarui barang
+    @PUT("update_barang.php")
+    Call<ResponseBody> updateBarang(
+            @Body Barang barang
+    );
 
-        // Panggil API
-        Call<BajuResponse> call = RetrofitClient.uploadBaju(namaBajuBody, idJenisBajuBody, idUkuranBajuBody,hargaBody, stokBody, imagePart);
-
-        call.enqueue(new Callback<BajuResponse>() {
-            @Override
-            public void onResponse(Call<BajuResponse> call, Response<BajuResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    if (response.body().isSuccess()) {
-                        // Data berhasil diunggah
-                        System.out.println("Pesan: " + response.body().getMessage());
-                    } else {
-                        // Error dari server
-                        System.err.println("Error: " + response.body().getError());
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<BajuResponse> call, Throwable t) {
-                // Gagal terhubung
-                System.err.println("Error: " + t.getMessage());
-            }
-        });
-    }
-
-
+    // Untuk menambahkan barang dengan gambar (multipart)
+    @Multipart
+    @POST("add_barang.php")
+    Call<ResponseBody> addBarangWithImage(
+            @Part("nama_barang") RequestBody namaBarang,
+            @Part("stok") RequestBody stok,
+            @Part MultipartBody.Part gambar
+    );
 }

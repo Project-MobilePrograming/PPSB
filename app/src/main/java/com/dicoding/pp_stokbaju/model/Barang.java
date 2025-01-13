@@ -1,19 +1,58 @@
 package com.dicoding.pp_stokbaju.model;
 
+
 public class Barang {
-    private String namaBarang;
-    private int jumlahBarang;
+    private int id;
+    private String NamaBarang;
+    private String JumlahBarang;
+    private int stok;
+    private String gambar; // Gambar bisa berupa URL atau Base64 jika Anda mengirimnya sebagai string
 
-    public Barang(String namaBarang, int jumlahBarang) {
-        this.namaBarang = namaBarang;
-        this.jumlahBarang = jumlahBarang;
+    // Constructor
+    public Barang(int id, String NmaBarang,int stok, String gambar) {
+        this.id = id;
+        this.NamaBarang = NamaBarang;
+        this.JumlahBarang = JumlahBarang;
+        this.stok = stok;
+        this.gambar = gambar;
     }
 
-    public String getNamaBarang() {
-        return namaBarang;
+    // Getter dan Setter
+    public int getId() {
+        return id;
     }
 
-    public int getJumlahBarang() {
-        return jumlahBarang;
+    public void setId(int id) {
+        this.id = id;
     }
+
+    public String getNamaBarang(){
+        return NamaBarang;
+    }
+
+    public String getJumlahBarang(){
+        return JumlahBarang;
+    }
+
+    public void setNamaBarang(String NamaBarang){
+        this.NamaBarang = NamaBarang;
+    }
+
+    public int getStok() {
+        return stok;
+    }
+
+    public void setStok(int stok) {
+        this.stok = stok;
+    }
+
+    public String getGambar() {
+        return gambar;
+    }
+
+    public void setGambar(String gambar) {
+        this.gambar = gambar;
+    }
+
 }
+

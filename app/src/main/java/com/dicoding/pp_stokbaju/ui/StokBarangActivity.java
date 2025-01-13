@@ -35,7 +35,6 @@ public class StokBarangActivity extends AppCompatActivity {
 
         // Inisialisasi data
         barangList = new ArrayList<>();
-        initDummyData();
 
         // Setup RecyclerView
         barangAdapter = new BarangAdapter(barangList);
@@ -57,11 +56,5 @@ public class StokBarangActivity extends AppCompatActivity {
                 Toast.makeText(StokBarangActivity.this, "Hapus clicked", Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    private void initDummyData() {
-        barangList.add(new Barang("Barang 1", 10));
-        barangList.add(new Barang("Barang 2", 15));
-        barangList.add(new Barang("Barang 3", 20));
     }
 }
