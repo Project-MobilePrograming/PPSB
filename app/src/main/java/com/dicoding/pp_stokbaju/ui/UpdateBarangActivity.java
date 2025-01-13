@@ -25,6 +25,8 @@ import com.dicoding.pp_stokbaju.model.JenisBaju;
 import com.dicoding.pp_stokbaju.model.UkuranBaju;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import okhttp3.MediaType;
@@ -161,27 +163,38 @@ public class UpdateBarangActivity extends AppCompatActivity {
         call.enqueue(new Callback<ApiResponse<List<JenisBaju>>>() {
             @Override
             public void onResponse(Call<ApiResponse<List<JenisBaju>>> call, Response<ApiResponse<List<JenisBaju>>> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
-                    List<JenisBaju> jenisBajuList = response.body().getData();
-                    ArrayAdapter<JenisBaju> adapter = new ArrayAdapter<>(
-                            UpdateBarangActivity.this,
-                            android.R.layout.simple_spinner_item,
-                            jenisBajuList
-                    );
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    spinnerJenisBaju.setAdapter(adapter);
+                if (response.isSuccessful() && response.body() != null) {
+                    ApiResponse<List<JenisBaju>> apiResponse = response.body();
+                    if (apiResponse.isSuccess()) {
+                        List<JenisBaju> jenisBajuList = apiResponse.getData();
 
-                    // Set selected item berdasarkan data baju
-                    if (baju != null) {
-                        for (int i = 0; i < jenisBajuList.size(); i++) {
-                            if (jenisBajuList.get(i).getId() == baju.getId_jenis_baju()) {
-                                spinnerJenisBaju.setSelection(i);
-                                break;
+                        // Periksa apakah data tidak null
+                        if (jenisBajuList != null && !jenisBajuList.isEmpty()) {
+                            ArrayAdapter<JenisBaju> adapter = new ArrayAdapter<>(
+                                    UpdateBarangActivity.this,
+                                    android.R.layout.simple_spinner_item,
+                                    jenisBajuList
+                            );
+                            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            spinnerJenisBaju.setAdapter(adapter);
+
+                            // Set selected item berdasarkan data baju yang sedang diupdate
+                            if (baju != null) {
+                                for (int i = 0; i < jenisBajuList.size(); i++) {
+                                    if (jenisBajuList.get(i).getId() == baju.getId_jenis_baju()) {
+                                        spinnerJenisBaju.setSelection(i);
+                                        break;
+                                    }
+                                }
                             }
+                        } else {
+                            Toast.makeText(UpdateBarangActivity.this, "Data jenis baju kosong", Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        Toast.makeText(UpdateBarangActivity.this, "Gagal mengambil data jenis baju: " + apiResponse.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(UpdateBarangActivity.this, "Gagal mengambil data jenis baju", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(UpdateBarangActivity.this, "Response tidak sukses", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -196,27 +209,38 @@ public class UpdateBarangActivity extends AppCompatActivity {
         call.enqueue(new Callback<ApiResponse<List<UkuranBaju>>>() {
             @Override
             public void onResponse(Call<ApiResponse<List<UkuranBaju>>> call, Response<ApiResponse<List<UkuranBaju>>> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
-                    List<UkuranBaju> ukuranBajuList = response.body().getData();
-                    ArrayAdapter<UkuranBaju> adapter = new ArrayAdapter<>(
-                            UpdateBarangActivity.this,
-                            android.R.layout.simple_spinner_item,
-                            ukuranBajuList
-                    );
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    spinnerUkuranBaju.setAdapter(adapter);
+                if (response.isSuccessful() && response.body() != null) {
+                    ApiResponse<List<UkuranBaju>> apiResponse = response.body();
+                    if (apiResponse.isSuccess()) {
+                        List<UkuranBaju> ukuranBajuList = apiResponse.getData();
 
-                    // Set selected item berdasarkan data baju
-                    if (baju != null) {
-                        for (int i = 0; i < ukuranBajuList.size(); i++) {
-                            if (ukuranBajuList.get(i).getId() == baju.getId_ukuran_baju()) {
-                                spinnerUkuranBaju.setSelection(i);
-                                break;
+                        // Periksa apakah data tidak null
+                        if (ukuranBajuList != null && !ukuranBajuList.isEmpty()) {
+                            ArrayAdapter<UkuranBaju> adapter = new ArrayAdapter<>(
+                                    UpdateBarangActivity.this,
+                                    android.R.layout.simple_spinner_item,
+                                    ukuranBajuList
+                            );
+                            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            spinnerUkuranBaju.setAdapter(adapter);
+
+                            // Set selected item berdasarkan data baju yang sedang diupdate
+                            if (baju != null) {
+                                for (int i = 0; i < ukuranBajuList.size(); i++) {
+                                    if (ukuranBajuList.get(i).getId() == baju.getId_ukuran_baju()) {
+                                        spinnerUkuranBaju.setSelection(i);
+                                        break;
+                                    }
+                                }
                             }
+                        } else {
+                            Toast.makeText(UpdateBarangActivity.this, "Data ukuran baju kosong", Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        Toast.makeText(UpdateBarangActivity.this, "Gagal mengambil data ukuran baju: " + apiResponse.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(UpdateBarangActivity.this, "Gagal mengambil data ukuran baju", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(UpdateBarangActivity.this, "Response tidak sukses", Toast.LENGTH_SHORT).show();
                 }
             }
 

@@ -1,5 +1,6 @@
 package com.dicoding.pp_stokbaju.api;
 
+import java.util.List;
 public class ApiResponse<T> {
     private String status; // "success" atau "error"
     private String message; // Pesan dari API

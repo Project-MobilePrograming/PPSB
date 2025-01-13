@@ -2,6 +2,7 @@ package com.dicoding.pp_stokbaju.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -12,7 +13,6 @@ import com.dicoding.pp_stokbaju.api.ApiResponse;
 import com.dicoding.pp_stokbaju.api.ApiService;
 import com.dicoding.pp_stokbaju.api.RetrofitClient;
 import com.dicoding.pp_stokbaju.model.Baju;
-
 import java.util.ArrayList;
 import java.util.List;
 import retrofit2.Call;
@@ -64,28 +64,26 @@ public class StokBarangActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ApiResponse<List<Baju>>> call, Response<ApiResponse<List<Baju>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    ApiResponse<List<Baju>> apiResponse = response.body();
-                    if (apiResponse.isSuccess()) {
-                        List<Baju> bajuListResponse = apiResponse.getData();
-                        if (bajuListResponse != null) {
-                            bajuList.clear();
-                            bajuList.addAll(bajuListResponse);
-                            bajuAdapter.notifyDataSetChanged();
-                        } else {
-                            Toast.makeText(StokBarangActivity.this, "Data baju kosong", Toast.LENGTH_SHORT).show();
+                    List<Baju> bajuListResponse = response.body().getData();
+                    if (bajuListResponse != null) {
+                        bajuList.clear();
+                        bajuList.addAll(bajuListResponse);
+
+                        // Debugging untuk URL gambar
+                        for (Baju baju : bajuList) {
+                            Log.d("StokBarangActivity", "URL Gambar: " + baju.getGambar_url());
                         }
-                    } else {
-                        Toast.makeText(StokBarangActivity.this, "Gagal mengambil data baju: " + apiResponse.getMessage(), Toast.LENGTH_SHORT).show();
+
+                        bajuAdapter.notifyDataSetChanged();
                     }
-                } else {
-                    Toast.makeText(StokBarangActivity.this, "Response tidak sukses", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<List<Baju>>> call, Throwable t) {
-                Toast.makeText(StokBarangActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e("StokBarangActivity", "Error: " + t.getMessage());
             }
         });
     }
+
 }

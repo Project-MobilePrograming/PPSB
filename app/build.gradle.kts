@@ -47,8 +47,8 @@ dependencies {
     // RecyclerView
     implementation(libs.recyclerview)
     // Glide
-    implementation(libs.glide)
-    annotationProcessor(libs.compiler)
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
     androidTestImplementation (libs.junit.v115)
     androidTestImplementation (libs.espresso.core.v351)
     androidTestImplementation(libs.ext.junit)

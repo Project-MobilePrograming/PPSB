@@ -1,5 +1,6 @@
 package com.dicoding.pp_stokbaju.adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.dicoding.pp_stokbaju.R;
 import com.dicoding.pp_stokbaju.model.Baju;
-
 import java.util.List;
 
 public class BajuAdapter extends RecyclerView.Adapter<BajuAdapter.BajuViewHolder> {
@@ -43,34 +43,32 @@ public class BajuAdapter extends RecyclerView.Adapter<BajuAdapter.BajuViewHolder
 
         // Set data ke view
         holder.tvNamaBaju.setText(baju.getNama_baju());
-        holder.tvJenisBaju.setText("Jenis: " + baju.getNama_jenis_baju()); // Langsung ambil dari model
-        holder.tvUkuranBaju.setText("Ukuran: " + baju.getUkuran_baju()); // Langsung ambil dari model
+        holder.tvJenisBaju.setText("Jenis: " + baju.getNama_jenis_baju());
+        holder.tvUkuranBaju.setText("Ukuran: " + baju.getUkuran_baju());
         holder.tvHarga.setText("Harga: Rp " + baju.getHarga());
         holder.tvStok.setText("Stok: " + baju.getStok());
 
-        // Memuat gambar dari URL menggunakan Glide
-        if (baju.getGambar_url() != null && !baju.getGambar_url().isEmpty()) {
-            // Pastikan URL gambar lengkap (termasuk base URL jika diperlukan)
-            String imageUrl = baju.getGambar_url().replace(" ", ""); // Hapus spasi jika ada
+        // Memuat gambar menggunakan Glide
+        String imageUrl = baju.getGambar_url();
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            Log.d("BajuAdapter", "Memuat gambar dari URL: " + imageUrl);
 
             Glide.with(holder.itemView.getContext())
-                    .load(imageUrl) // Load gambar dari URL
-                    .placeholder(R.drawable.ic_launcher_background) // Gambar placeholder saat loading
-                    .error(R.drawable.ic_launcher_foreground) // Gambar jika error
+                    .load(imageUrl)
+                    .placeholder(R.drawable.ic_launcher_background) // Gambar placeholder
+                    .error(R.drawable.ic_edit) // Gambar jika gagal dimuat
                     .into(holder.ivGambar);
         } else {
-            // Jika URL gambar kosong, tampilkan gambar default
-            holder.ivGambar.setImageResource(R.drawable.ic_launcher_background);
+            // Jika URL kosong atau null, tampilkan log dan gambar default
+            holder.ivGambar.setImageResource(R.drawable.ic_delete);
+            Log.e("BajuAdapter", "URL gambar kosong untuk item: " + baju.getNama_baju());
         }
 
+
         // Handle item click
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onItemClick(baju);
-            }
-        });
+        holder.itemView.setOnClickListener(v -> listener.onItemClick(baju));
     }
+
 
     // Jumlah item dalam daftar
     @Override

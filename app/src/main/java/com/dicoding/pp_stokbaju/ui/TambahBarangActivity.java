@@ -5,28 +5,26 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.dicoding.pp_stokbaju.R;
 import com.dicoding.pp_stokbaju.api.ApiService;
 import com.dicoding.pp_stokbaju.api.RetrofitClient;
 import com.dicoding.pp_stokbaju.api.ApiResponse;
 import com.dicoding.pp_stokbaju.model.JenisBaju;
 import com.dicoding.pp_stokbaju.model.UkuranBaju;
-
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -86,17 +84,31 @@ public class TambahBarangActivity extends AppCompatActivity {
         call.enqueue(new Callback<ApiResponse<List<JenisBaju>>>() {
             @Override
             public void onResponse(Call<ApiResponse<List<JenisBaju>>> call, Response<ApiResponse<List<JenisBaju>>> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
-                    jenisBajuList = response.body().getData();
-                    ArrayAdapter<JenisBaju> adapter = new ArrayAdapter<>(
-                            TambahBarangActivity.this,
-                            android.R.layout.simple_spinner_item,
-                            jenisBajuList
-                    );
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    spinnerJenisBaju.setAdapter(adapter);
+                if (response.isSuccessful() && response.body() != null) {
+                    ApiResponse<List<JenisBaju>> apiResponse = response.body();
+                    if (apiResponse.isSuccess()) {
+                        List<JenisBaju> jenisBajuListResponse = apiResponse.getData();
+
+                        // Periksa apakah data tidak null
+                        if (jenisBajuListResponse != null && !jenisBajuListResponse.isEmpty()) {
+                            jenisBajuList.clear();
+                            jenisBajuList.addAll(jenisBajuListResponse);
+
+                            ArrayAdapter<JenisBaju> adapter = new ArrayAdapter<>(
+                                    TambahBarangActivity.this,
+                                    android.R.layout.simple_spinner_item,
+                                    jenisBajuList
+                            );
+                            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            spinnerJenisBaju.setAdapter(adapter);
+                        } else {
+                            Toast.makeText(TambahBarangActivity.this, "Data jenis baju kosong", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(TambahBarangActivity.this, "Gagal mengambil data jenis baju: " + apiResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(TambahBarangActivity.this, "Gagal mengambil data jenis baju", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(TambahBarangActivity.this, "Response tidak sukses", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -113,17 +125,31 @@ public class TambahBarangActivity extends AppCompatActivity {
         call.enqueue(new Callback<ApiResponse<List<UkuranBaju>>>() {
             @Override
             public void onResponse(Call<ApiResponse<List<UkuranBaju>>> call, Response<ApiResponse<List<UkuranBaju>>> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
-                    ukuranBajuList = response.body().getData();
-                    ArrayAdapter<UkuranBaju> adapter = new ArrayAdapter<>(
-                            TambahBarangActivity.this,
-                            android.R.layout.simple_spinner_item,
-                            ukuranBajuList
-                    );
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    spinnerUkuranBaju.setAdapter(adapter);
+                if (response.isSuccessful() && response.body() != null) {
+                    ApiResponse<List<UkuranBaju>> apiResponse = response.body();
+                    if (apiResponse.isSuccess()) {
+                        List<UkuranBaju> ukuranBajuListResponse = apiResponse.getData();
+
+                        // Periksa apakah data tidak null
+                        if (ukuranBajuListResponse != null && !ukuranBajuListResponse.isEmpty()) {
+                            ukuranBajuList.clear();
+                            ukuranBajuList.addAll(ukuranBajuListResponse);
+
+                            ArrayAdapter<UkuranBaju> adapter = new ArrayAdapter<>(
+                                    TambahBarangActivity.this,
+                                    android.R.layout.simple_spinner_item,
+                                    ukuranBajuList
+                            );
+                            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            spinnerUkuranBaju.setAdapter(adapter);
+                        } else {
+                            Toast.makeText(TambahBarangActivity.this, "Data ukuran baju kosong", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(TambahBarangActivity.this, "Gagal mengambil data ukuran baju: " + apiResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(TambahBarangActivity.this, "Gagal mengambil data ukuran baju", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(TambahBarangActivity.this, "Response tidak sukses", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -135,6 +161,8 @@ public class TambahBarangActivity extends AppCompatActivity {
     }
 
     // Fungsi untuk memilih gambar dari galeri
+
+    // Fungsi untuk memilih gambar
     private void pilihGambar() {
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -142,7 +170,6 @@ public class TambahBarangActivity extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(intent, "Pilih Gambar"), PICK_IMAGE_REQUEST);
     }
 
-    // Mendapatkan hasil saat aktivitas memilih gambar selesai
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -152,7 +179,6 @@ public class TambahBarangActivity extends AppCompatActivity {
         }
     }
 
-    // Fungsi untuk menambahkan barang
     private void tambahBarang() {
         String namaBaju = etNamaBaju.getText().toString().trim();
         JenisBaju jenisBaju = (JenisBaju) spinnerJenisBaju.getSelectedItem();
@@ -160,34 +186,34 @@ public class TambahBarangActivity extends AppCompatActivity {
         String harga = etHarga.getText().toString().trim();
         String stok = etStok.getText().toString().trim();
 
-        // Validasi input kosong
         if (namaBaju.isEmpty() || harga.isEmpty() || stok.isEmpty() || imageUri == null) {
             Toast.makeText(this, "Harap lengkapi semua data", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Validasi harga dan stok harus angka
         try {
-            double hargaBaju = Double.parseDouble(harga);
-            int stokBaju = Integer.parseInt(stok);
+            Double.parseDouble(harga);
+            Integer.parseInt(stok);
         } catch (NumberFormatException e) {
             Toast.makeText(this, "Harga dan stok harus berupa angka", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Konversi Uri ke MultipartBody.Part
-        File file = new File(getRealPathFromURI(imageUri));
+        File file = getFileFromUri(imageUri);
+        if (file == null || !file.exists()) {
+            Toast.makeText(this, "Gagal memuat gambar", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
         MultipartBody.Part imagePart = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
 
-        // Buat RequestBody untuk setiap field
         RequestBody namaBajuBody = RequestBody.create(MediaType.parse("text/plain"), namaBaju);
         RequestBody idJenisBajuBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(jenisBaju.getId()));
         RequestBody idUkuranBajuBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(ukuranBaju.getId()));
         RequestBody hargaBody = RequestBody.create(MediaType.parse("text/plain"), harga);
         RequestBody stokBody = RequestBody.create(MediaType.parse("text/plain"), stok);
 
-        // Panggil API untuk menambahkan baju
         Call<ApiResponse<Void>> call = apiService.createBaju(
                 namaBajuBody,
                 idJenisBajuBody,
@@ -196,6 +222,7 @@ public class TambahBarangActivity extends AppCompatActivity {
                 stokBody,
                 imagePart
         );
+
         call.enqueue(new Callback<ApiResponse<Void>>() {
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
@@ -203,7 +230,12 @@ public class TambahBarangActivity extends AppCompatActivity {
                     Toast.makeText(TambahBarangActivity.this, "Barang berhasil ditambahkan", Toast.LENGTH_SHORT).show();
                     clearInput();
                 } else {
-                    Toast.makeText(TambahBarangActivity.this, "Gagal menambahkan barang", Toast.LENGTH_SHORT).show();
+                    try {
+                        Toast.makeText(TambahBarangActivity.this, "Gagal: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Toast.makeText(TambahBarangActivity.this, "Error membaca pesan gagal", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
@@ -225,15 +257,22 @@ public class TambahBarangActivity extends AppCompatActivity {
         imageUri = null;
     }
 
-    // Fungsi untuk mendapatkan path real dari URI
-    private String getRealPathFromURI(Uri contentUri) {
-        String[] proj = { MediaStore.Images.Media.DATA };
-        Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
-        if (cursor == null) return null;
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        String path = cursor.getString(column_index);
-        cursor.close();
-        return path;
+    private File getFileFromUri(Uri uri) {
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(uri);
+            File file = new File(getCacheDir(), "temp_image.jpg");
+            FileOutputStream outputStream = new FileOutputStream(file);
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
+            }
+            outputStream.close();
+            inputStream.close();
+            return file;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
