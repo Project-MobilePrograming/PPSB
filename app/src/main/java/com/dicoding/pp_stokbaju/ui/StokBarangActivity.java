@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,32 +32,29 @@ public class StokBarangActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stok_barang);
 
-        // Inisialisasi view
         recyclerViewStokBaju = findViewById(R.id.recyclerViewStokBaju);
-
-        // Inisialisasi ApiService
         apiService = RetrofitClient.getClient().create(ApiService.class);
-
-        // Inisialisasi data
         bajuList = new ArrayList<>();
-
-        // Setup RecyclerView
-        bajuAdapter = new BajuAdapter(bajuList, new BajuAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(Baju baju) {
-                // Buka DetailBarangActivity dengan mengirim data baju
-                Intent intent = new Intent(StokBarangActivity.this, DetailBarangActivity.class);
-                intent.putExtra("BAJU_DATA", baju); // Kirim data baju sebagai Parcelable
-                startActivity(intent);
-            }
+        bajuAdapter = new BajuAdapter(bajuList, baju -> {
+            Intent intent = new Intent(StokBarangActivity.this, DetailBarangActivity.class);
+            intent.putExtra("BAJU_DATA", baju);
+            startActivityForResult(intent, 1);
         });
 
         recyclerViewStokBaju.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewStokBaju.setAdapter(bajuAdapter);
 
-        // Ambil data baju dari API
         fetchDataBaju();
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            fetchDataBaju(); // Refresh data stok setelah detail atau update selesai
+        }
+    }
+
 
     private void fetchDataBaju() {
         Call<ApiResponse<List<Baju>>> call = apiService.getAllBaju();
@@ -64,26 +62,17 @@ public class StokBarangActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ApiResponse<List<Baju>>> call, Response<ApiResponse<List<Baju>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<Baju> bajuListResponse = response.body().getData();
-                    if (bajuListResponse != null) {
-                        bajuList.clear();
-                        bajuList.addAll(bajuListResponse);
-
-                        // Debugging untuk URL gambar
-                        for (Baju baju : bajuList) {
-                            Log.d("StokBarangActivity", "URL Gambar: " + baju.getGambar_url());
-                        }
-
-                        bajuAdapter.notifyDataSetChanged();
-                    }
+                    bajuList.clear();
+                    bajuList.addAll(response.body().getData());
+                    bajuAdapter.notifyDataSetChanged();
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<List<Baju>>> call, Throwable t) {
                 Log.e("StokBarangActivity", "Error: " + t.getMessage());
+                Toast.makeText(StokBarangActivity.this, "Gagal memuat data stok.", Toast.LENGTH_SHORT).show();
             }
         });
     }
-
 }

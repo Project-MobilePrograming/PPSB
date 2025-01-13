@@ -35,14 +35,17 @@ public interface ApiService {
     Call<ApiResponse<Baju>> getBajuById(@Path("id") int id);
 
     @Multipart
-    @PUT("api/baju/update/{id}")
+    @POST("api/baju/update") // Gunakan POST jika PUT tidak didukung backend
     Call<ApiResponse<Baju>> updateBaju(
-            @Path("id") int id,
+            @Part("id") RequestBody id,
             @Part("nama_baju") RequestBody namaBaju,
             @Part("id_jenis_baju") RequestBody idJenisBaju,
             @Part("id_ukuran_baju") RequestBody idUkuranBaju,
-            @Part MultipartBody.Part image
+            @Part("harga") RequestBody harga,
+            @Part("stok") RequestBody stok,
+            @Part MultipartBody.Part image // Ini opsional, bisa null
     );
+
 
     @DELETE("api/baju/delete/{id}")
     Call<ApiResponse<Void>> deleteBaju(@Path("id") int id);
