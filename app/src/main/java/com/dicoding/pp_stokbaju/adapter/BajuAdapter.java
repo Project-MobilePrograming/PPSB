@@ -4,6 +4,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -13,32 +14,42 @@ import com.dicoding.pp_stokbaju.R;
 import com.dicoding.pp_stokbaju.model.Baju;
 import java.util.List;
 
-public class BajuAdapter extends RecyclerView.Adapter<BajuAdapter.BajuViewHolder> {
+public class BajuAdapter extends RecyclerView.Adapter<BajuAdapter.ViewHolder> {
+
     private List<Baju> bajuList;
-    private OnItemClickListener listener;
+    private OnItemClickListener onItemClickListener;
+    private OnDeleteClickListener onDeleteClickListener;
 
     // Interface untuk item click listener
     public interface OnItemClickListener {
         void onItemClick(Baju baju);
     }
 
-    // Constructor dengan listener
-    public BajuAdapter(List<Baju> bajuList, OnItemClickListener listener) {
-        this.bajuList = bajuList;
-        this.listener = listener;
+    // Interface untuk delete click listener
+    public interface OnDeleteClickListener {
+        void onDeleteClick(Baju baju);
     }
 
-    // Membuat view holder untuk setiap item
+    // Constructor dengan listener
+    public BajuAdapter(List<Baju> bajuList, OnItemClickListener itemClickListener) {
+        this.bajuList = bajuList;
+        this.onItemClickListener = itemClickListener;
+
+    }
+
+    public BajuAdapter(OnDeleteClickListener onDeleteClickListener) {
+        this.onDeleteClickListener = onDeleteClickListener;
+    }
+
     @NonNull
     @Override
-    public BajuViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_barang, parent, false);
-        return new BajuViewHolder(view);
+        return new ViewHolder(view);
     }
 
-    // Mengikat data ke view holder
     @Override
-    public void onBindViewHolder(@NonNull BajuViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Baju baju = bajuList.get(position);
 
         // Set data ke view
@@ -64,24 +75,24 @@ public class BajuAdapter extends RecyclerView.Adapter<BajuAdapter.BajuViewHolder
             Log.e("BajuAdapter", "URL gambar kosong untuk item: " + baju.getNama_baju());
         }
 
-
         // Handle item click
-        holder.itemView.setOnClickListener(v -> listener.onItemClick(baju));
+        holder.itemView.setOnClickListener(v -> onItemClickListener.onItemClick(baju));
+
+        // Handle delete button click
+        holder.buttonDelete.setOnClickListener(v -> onDeleteClickListener.onDeleteClick(baju));
     }
 
-
-    // Jumlah item dalam daftar
     @Override
     public int getItemCount() {
         return bajuList.size();
     }
 
-    // ViewHolder untuk menyimpan referensi view
-    public static class BajuViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvNamaBaju, tvJenisBaju, tvUkuranBaju, tvHarga, tvStok;
         ImageView ivGambar;
+        Button buttonDelete;
 
-        public BajuViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvNamaBaju = itemView.findViewById(R.id.tvNamaBaju);
             tvJenisBaju = itemView.findViewById(R.id.tvJenisBaju);
@@ -89,6 +100,7 @@ public class BajuAdapter extends RecyclerView.Adapter<BajuAdapter.BajuViewHolder
             tvHarga = itemView.findViewById(R.id.tvHarga);
             tvStok = itemView.findViewById(R.id.tvStok);
             ivGambar = itemView.findViewById(R.id.ivGambar);
+            buttonDelete = itemView.findViewById(R.id.buttonDelete);
         }
     }
 }

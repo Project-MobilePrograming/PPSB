@@ -75,4 +75,5 @@ public class StokBarangActivity extends AppCompatActivity {
             }
         });
     }
+
 }

@@ -9,18 +9,18 @@
     <!-- Bagian Gambar dan Informasi Baju -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="203dp"
         android:orientation="horizontal"
         android:padding="6dp">
 
         <!-- Gambar Baju -->
         <ImageView
             android:id="@+id/ivGambar"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="125dp"
+            android:layout_height="147dp"
             android:layout_marginEnd="16dp"
-            android:scaleType="centerCrop"
-            android:background="@color/red" />
+            android:background="@color/red"
+            android:scaleType="centerCrop" />
 
         <!-- Informasi Baju -->
         <LinearLayout
@@ -42,9 +42,9 @@
                 android:id="@+id/tvJenisBaju"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:text="Jenis Baju"
-                android:textSize="16sp"
-                android:layout_marginTop="4dp" />
+                android:textSize="16sp" />
 
             <!-- Ukuran Baju -->
             <TextView
@@ -60,18 +60,32 @@
                 android:id="@+id/tvHarga"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:text="Harga"
-                android:textSize="16sp"
-                android:layout_marginTop="4dp" />
+                android:textSize="16sp" />
 
             <!-- Stok -->
+
             <TextView
                 android:id="@+id/tvStok"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:text="Stok"
-                android:textSize="16sp"
-                android:layout_marginTop="4dp" />
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/buttonDelete"
+                android:layout_width="125dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="70dp"
+                android:layout_marginLeft="8dp"
+                android:backgroundTint="#FF0000"
+                android:text="Delete"
+                android:textColor="#FFFFFF" />
+
+            <!-- Tombol Delete -->
         </LinearLayout>
+
     </LinearLayout>
 </LinearLayout>
