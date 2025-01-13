@@ -45,6 +45,11 @@ public class StokBarangActivity extends AppCompatActivity {
         recyclerViewStokBaju.setAdapter(bajuAdapter);
 
         fetchDataBaju();
+
+        // Di StokBarangActivity
+        Intent intent = new Intent(StokBarangActivity.this, CariBarangActivity.class);
+        intent.putParcelableArrayListExtra("BAJU_LIST", new ArrayList<>(bajuList)); // Kirim data baju
+        startActivity(intent);
     }
 
     @Override
@@ -55,7 +60,6 @@ public class StokBarangActivity extends AppCompatActivity {
         }
     }
 
-
     private void fetchDataBaju() {
         Call<ApiResponse<List<Baju>>> call = apiService.getAllBaju();
         call.enqueue(new Callback<ApiResponse<List<Baju>>>() {
@@ -65,6 +69,11 @@ public class StokBarangActivity extends AppCompatActivity {
                     bajuList.clear();
                     bajuList.addAll(response.body().getData());
                     bajuAdapter.notifyDataSetChanged();
+
+                    // Menambahkan Log.d untuk menampilkan list stok baju
+                    for (Baju baju : bajuList) {
+                        Log.d("StokBarangActivity", "Baju: " + baju.getNama_baju() + ", Stok: " + baju.getStok() + "Gambar" + baju.getGambar_url());
+                    }
                 }
             }
 
@@ -75,4 +84,5 @@ public class StokBarangActivity extends AppCompatActivity {
             }
         });
     }
+
 }

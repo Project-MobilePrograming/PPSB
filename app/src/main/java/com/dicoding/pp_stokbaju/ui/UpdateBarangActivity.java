@@ -3,7 +3,6 @@ package com.dicoding.pp_stokbaju.ui;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -11,10 +10,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.bumptech.glide.Glide;
 import com.dicoding.pp_stokbaju.R;
 import com.dicoding.pp_stokbaju.api.ApiResponse;
@@ -23,12 +20,10 @@ import com.dicoding.pp_stokbaju.api.RetrofitClient;
 import com.dicoding.pp_stokbaju.model.Baju;
 import com.dicoding.pp_stokbaju.model.JenisBaju;
 import com.dicoding.pp_stokbaju.model.UkuranBaju;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.List;
-
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -47,8 +42,7 @@ public class UpdateBarangActivity extends AppCompatActivity {
     private ApiService apiService;
     private Baju baju;
     private Uri imageUri;
-    private MultipartBody.Part imagePart;
-    private String existingImageUrl; // URL gambar yang sudah ada
+    private String existingImageUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,40 +66,51 @@ public class UpdateBarangActivity extends AppCompatActivity {
         // Ambil data baju dari intent
         baju = getIntent().getParcelableExtra("BAJU_DATA");
         if (baju != null) {
-            // Isi form dengan data baju
             etNamaBaju.setText(baju.getNama_baju());
             etHarga.setText(String.valueOf(baju.getHarga()));
             etStok.setText(String.valueOf(baju.getStok()));
-            existingImageUrl = baju.getGambar_url(); // URL gambar dari data
-            loadImage(existingImageUrl); // Tampilkan gambar ke ImageView
+            existingImageUrl = baju.getGambar_url();
+            loadImage(existingImageUrl);
         } else {
             Toast.makeText(this, "Data baju tidak ditemukan", Toast.LENGTH_SHORT).show();
-            finish(); // Tutup aktivitas jika data tidak valid
+            finish();
         }
 
-        // Ambil data jenis baju dan ukuran baju dari API
         fetchJenisBaju();
         fetchUkuranBaju();
 
-        // Tombol Pilih Gambar
         btnPilihGambar.setOnClickListener(v -> openImageChooser());
-
-        // Tombol Update
         btnUpdate.setOnClickListener(v -> {
             if (validateInput()) {
-                updateBaju(); // Panggil fungsi update
+                updateBaju();
             }
         });
+        btnHapus.setOnClickListener(v -> deleteBaju(baju.getId()));
+    }
 
-        // Tombol Hapus
-        btnHapus.setOnClickListener(v -> deleteBaju(baju.getId())); // Panggil fungsi hapus dengan ID baju
+    // Metode untuk mengatur spinner JenisBaju
+    private void setSpinnerSelection(Spinner spinner, List<?> list, int targetId) {
+        for (int i = 0; i < list.size(); i++) {
+            Object item = list.get(i);
+            if (item instanceof JenisBaju) {
+                if (((JenisBaju) item).getId() == targetId) {
+                    spinner.setSelection(i);
+                    break;
+                }
+            } else if (item instanceof UkuranBaju) {
+                if (((UkuranBaju) item).getId() == targetId) {
+                    spinner.setSelection(i);
+                    break;
+                }
+            }
+        }
     }
 
     private void loadImage(String imageUrl) {
         if (imageUrl != null && !imageUrl.isEmpty()) {
             Glide.with(this)
                     .load(imageUrl)
-                    .placeholder(R.drawable.ic_edit) // Placeholder jika gambar belum tersedia
+                    .placeholder(R.drawable.ic_edit)
                     .into(ivGambar);
         } else {
             ivGambar.setImageResource(R.drawable.ic_delete);
@@ -141,37 +146,29 @@ public class UpdateBarangActivity extends AppCompatActivity {
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             imageUri = data.getData();
             ivGambar.setImageURI(imageUri);
-
-            // Konversi Uri ke MultipartBody.Part
-            String filePath = getFilePathFromUri(imageUri);
-            if (filePath != null) {
-                File file = new File(filePath);
-                if (file.exists()) {
-                    RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
-                    imagePart = MultipartBody.Part.createFormData("gambar_url", file.getName(), requestFile);
-                } else {
-                    Toast.makeText(this, "Gagal memuat gambar. File tidak ditemukan.", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                Toast.makeText(this, "Gagal mendapatkan path gambar.", Toast.LENGTH_SHORT).show();
-            }
         }
     }
 
     private String getFilePathFromUri(Uri uri) {
-        File file = new File(getCacheDir(), "temp_image.jpg");
-        try (InputStream inputStream = getContentResolver().openInputStream(uri);
-             FileOutputStream outputStream = new FileOutputStream(file)) {
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = inputStream.read(buffer)) > 0) {
-                outputStream.write(buffer, 0, length);
+        String filePath = null;
+        if (uri != null) {
+            try {
+                // Buat file sementara di cache direktori
+                File file = new File(getCacheDir(), "temp_image.jpg");
+                try (InputStream inputStream = getContentResolver().openInputStream(uri);
+                     FileOutputStream outputStream = new FileOutputStream(file)) {
+                    byte[] buffer = new byte[1024];
+                    int length;
+                    while ((length = inputStream.read(buffer)) > 0) {
+                        outputStream.write(buffer, 0, length);
+                    }
+                }
+                filePath = file.getAbsolutePath();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
         }
-        return file.getAbsolutePath();
+        return filePath;
     }
 
     private void fetchJenisBaju() {
@@ -185,13 +182,8 @@ public class UpdateBarangActivity extends AppCompatActivity {
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinnerJenisBaju.setAdapter(adapter);
 
-                    // Set jenis baju saat ini
-                    for (int i = 0; i < jenisBajuList.size(); i++) {
-                        if (jenisBajuList.get(i).getId() == baju.getId_jenis_baju()) {
-                            spinnerJenisBaju.setSelection(i);
-                            break;
-                        }
-                    }
+                    // Set spinner ke nilai yang sesuai dengan data baju
+                    setSpinnerSelection(spinnerJenisBaju, jenisBajuList, baju.getId_jenis_baju());
                 }
             }
 
@@ -237,6 +229,7 @@ public class UpdateBarangActivity extends AppCompatActivity {
         int jenisBajuId = ((JenisBaju) spinnerJenisBaju.getSelectedItem()).getId();
         int ukuranBajuId = ((UkuranBaju) spinnerUkuranBaju.getSelectedItem()).getId();
 
+        // Buat RequestBody untuk setiap field
         RequestBody idBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(baju.getId()));
         RequestBody namaBajuBody = RequestBody.create(MediaType.parse("text/plain"), namaBaju);
         RequestBody idJenisBaju = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(jenisBajuId));
@@ -244,8 +237,17 @@ public class UpdateBarangActivity extends AppCompatActivity {
         RequestBody hargaBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(harga));
         RequestBody stokBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(stok));
 
+        // Jika ada gambar baru, buat MultipartBody.Part
+        MultipartBody.Part gambarPart = null;
+        if (imageUri != null) {
+            File file = new File(getFilePathFromUri(imageUri));
+            RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
+            gambarPart = MultipartBody.Part.createFormData("gambar_url", file.getName(), requestFile);
+        }
+
+        // Panggil API
         Call<ApiResponse<Baju>> call = apiService.updateBaju(
-                idBody, namaBajuBody, idJenisBaju, idUkuranBaju, hargaBody, stokBody, imagePart
+                idBody, namaBajuBody, idJenisBaju, idUkuranBaju, hargaBody, stokBody, gambarPart
         );
 
         call.enqueue(new Callback<ApiResponse<Baju>>() {
@@ -253,6 +255,9 @@ public class UpdateBarangActivity extends AppCompatActivity {
             public void onResponse(Call<ApiResponse<Baju>> call, Response<ApiResponse<Baju>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
                     Toast.makeText(UpdateBarangActivity.this, "Baju berhasil diupdate", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(UpdateBarangActivity.this, StokBarangActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
                     finish();
                 } else {
                     try {
@@ -308,5 +313,4 @@ public class UpdateBarangActivity extends AppCompatActivity {
         setResult(RESULT_OK);
         super.finish();
     }
-
 }

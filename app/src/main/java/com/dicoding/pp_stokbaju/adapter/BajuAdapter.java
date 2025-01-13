@@ -16,6 +16,7 @@ import java.util.List;
 public class BajuAdapter extends RecyclerView.Adapter<BajuAdapter.BajuViewHolder> {
     private List<Baju> bajuList;
     private OnItemClickListener listener;
+    private static final String BASE_IMAGE_URL = "https://d68d-2001-448a-500c-1d64-f4cd-5918-c6c9-86b0.ngrok-free.app/PPSB/stok_baju_api/uploads/";
 
     // Interface untuk item click listener
     public interface OnItemClickListener {
@@ -48,9 +49,9 @@ public class BajuAdapter extends RecyclerView.Adapter<BajuAdapter.BajuViewHolder
         holder.tvHarga.setText("Harga: Rp " + baju.getHarga());
         holder.tvStok.setText("Stok: " + baju.getStok());
 
-        // Memuat gambar menggunakan Glide
-        String imageUrl = baju.getGambar_url();
-        if (imageUrl != null && !imageUrl.isEmpty()) {
+        // Gabungkan base URL dengan nama file gambar
+        String imageUrl = BASE_IMAGE_URL + baju.getGambar_url();
+        if (baju.getGambar_url() != null && !baju.getGambar_url().isEmpty()) {
             Log.d("BajuAdapter", "Memuat gambar dari URL: " + imageUrl);
 
             Glide.with(holder.itemView.getContext())
@@ -64,11 +65,13 @@ public class BajuAdapter extends RecyclerView.Adapter<BajuAdapter.BajuViewHolder
             Log.e("BajuAdapter", "URL gambar kosong untuk item: " + baju.getNama_baju());
         }
 
-
         // Handle item click
-        holder.itemView.setOnClickListener(v -> listener.onItemClick(baju));
+        holder.itemView.setOnClickListener(v -> {
+            // Kirim URL lengkap ke DetailBarangActivity
+            baju.setGambar_url(imageUrl); // Update URL gambar di objek baju
+            listener.onItemClick(baju);
+        });
     }
-
 
     // Jumlah item dalam daftar
     @Override

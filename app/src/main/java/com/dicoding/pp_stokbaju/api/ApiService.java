@@ -7,6 +7,7 @@ import java.util.List;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
@@ -14,6 +15,7 @@ import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface ApiService {
     // Baju endpoints
@@ -47,8 +49,8 @@ public interface ApiService {
     );
 
 
-    @DELETE("api/baju/delete/{id}")
-    Call<ApiResponse<Void>> deleteBaju(@Path("id") int id);
+    @DELETE("api/baju/delete")
+    Call<ApiResponse<Void>> deleteBaju(@Query("id") int id);
 
     // Jenis Baju endpoints
     @GET("api/jenis_baju/read")
