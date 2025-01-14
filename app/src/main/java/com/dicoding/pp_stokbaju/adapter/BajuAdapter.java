@@ -1,3 +1,4 @@
+
 package com.dicoding.pp_stokbaju.adapter;
 
 import android.util.Log;
@@ -16,7 +17,7 @@ import java.util.List;
 public class BajuAdapter extends RecyclerView.Adapter<BajuAdapter.BajuViewHolder> {
     private List<Baju> bajuList;
     private OnItemClickListener listener;
-    private static final String BASE_IMAGE_URL = "https://d68d-2001-448a-500c-1d64-f4cd-5918-c6c9-86b0.ngrok-free.app/PPSB/stok_baju_api/uploads/";
+    private static final String BASE_IMAGE_URL = "https://cff6-2001-448a-500c-1d64-c5af-18f0-47d2-7361.ngrok-free.app/PPSB/stok_baju_api/uploads/";
 
     // Interface untuk item click listener
     public interface OnItemClickListener {

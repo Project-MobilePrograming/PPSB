@@ -46,10 +46,6 @@ public class StokBarangActivity extends AppCompatActivity {
 
         fetchDataBaju();
 
-        // Di StokBarangActivity
-        Intent intent = new Intent(StokBarangActivity.this, CariBarangActivity.class);
-        intent.putParcelableArrayListExtra("BAJU_LIST", new ArrayList<>(bajuList)); // Kirim data baju
-        startActivity(intent);
     }
 
     @Override
